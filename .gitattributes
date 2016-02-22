@@ -1,0 +1,16 @@
+# Normalize line-endings
+* text=auto
+
+# Explicitly convert to LF line-endings
+*.java text
+*.css text
+*.html text
+*.js text
+*.md text
+*.xml text
+*.properties text
+
+# Explicitly set binary files (do not convert line-endings)
+*.png binary
+*.jpg binary
+*.ico binary

@@ -1,7 +1,10 @@
 package nl.liacs.sports.football.parser.sql;
 
+import com.google.common.collect.Iterables;
+
 import nl.liacs.sports.football.parser.positional.models.Ball;
 import nl.liacs.sports.football.parser.positional.models.Frame;
+import nl.liacs.sports.football.parser.positional.models.Player;
 import nl.liacs.sports.football.parser.positional.models.Record;
 import nl.liacs.sports.football.parser.positional.models.Referee;
 
@@ -59,7 +62,7 @@ public class DBOutputWriter {
         }
 
         /* Insert players with unique names (just alphabetical letters right now). */
-        for (int i = 0; i < 11; i++) {
+        for (int i = 11; i < 22; i++) {
             try (NamedParameterStatement stmt = new NamedParameterStatement(con, "INSERT INTO players(name) VALUES(:name)")) {
                 stmt.setString("name", Character.toString((char) (65 + i)));
                 stmt.execute();
@@ -119,6 +122,21 @@ public class DBOutputWriter {
                 stmt.setInt("possession", ball.getPossession());
                 stmt.setInt("frame_id", frame_id);
                 stmt.execute();
+            }
+
+            internal_id = 0;  // NOTE: these ID's are used in the original data and documentation to refer to entities (players and referees)
+
+            for (Player player : Iterables.concat(record.getTeamHome(), record.getTeamAway())) {
+                try (NamedParameterStatement stmt = new NamedParameterStatement(con, "INSERT INTO player_measurements(internal_id, x, y, speed, player_id, frame_id) VALUES(:internal_id, :x, :y, :speed, :player_id, :frame_id)", Statement.RETURN_GENERATED_KEYS)) {
+                    stmt.setInt("internal_id", internal_id);
+                    stmt.setFloat("x", player.getX());
+                    stmt.setFloat("y", player.getY());
+                    stmt.setFloat("speed", player.getSpeed());
+                    stmt.setInt("player_id", internal_id + 1);  // FIXME: this might break if more matches are added, since then we cannot easily compute the id this way
+                    stmt.setInt("frame_id", frame_id);
+                    stmt.execute();
+                    internal_id++;
+                }
             }
         }
     }

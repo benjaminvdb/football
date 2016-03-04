@@ -21,11 +21,11 @@ import java.util.List;
 import java.util.ListIterator;
 
 public class DBOutputWriter {
-    private static final int DEFAULT_BATCH_SIZE = 1024;
+    private static final int DEFAULT_BATCH_SIZE = 10000;
 
     private static final Logger log = LoggerFactory.getLogger(DBOutputWriter.class);
 
-    public static void write(Connection con, List<Record> records, String teamHome, String teamAway) throws ClassNotFoundException, SQLException {
+    public static void write(Connection con, List<Record> records, String teamHome, String teamAway, int chunkSize) throws ClassNotFoundException, SQLException {
         /* Empty tables. */
         con.createStatement().executeUpdate("SET FOREIGN_KEY_CHECKS = 0");
         con.createStatement().executeUpdate("TRUNCATE teams");
@@ -104,7 +104,7 @@ public class DBOutputWriter {
             NamedParameterStatement stmt_player = new NamedParameterStatement(con, "INSERT INTO player_measurements(internal_id, x, y, speed, player_id, frame_id) VALUES(:internal_id, :x, :y, :speed, :player_id, :frame_id)", Statement.RETURN_GENERATED_KEYS);
 
             ListIterator<Record> it = records.listIterator(totalRecords);
-            for (int currentBatchSize = 0; currentBatchSize < DEFAULT_BATCH_SIZE && it.hasNext(); currentBatchSize++) {
+            for (int currentBatchSize = 0; currentBatchSize < chunkSize && it.hasNext(); currentBatchSize++) {
                 Record record = it.next();
                 Frame frame = record.getFrame();
                 stmt.setInt("frame_number", frame.getFrameNumber());

@@ -8,12 +8,22 @@ import nl.liacs.sports.football.parser.positional.models.Player;
 import nl.liacs.sports.football.parser.positional.models.Record;
 import nl.liacs.sports.football.parser.positional.models.Referee;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 public class DBOutputWriter {
+    private static final int DEFAULT_BATCH_SIZE = 1024;
+
+    private static final Logger log = LoggerFactory.getLogger(DBOutputWriter.class);
 
     public static void write(Connection con, List<Record> records, String teamHome, String teamAway) throws ClassNotFoundException, SQLException {
         /* Empty tables. */
@@ -85,59 +95,82 @@ public class DBOutputWriter {
             }
         }
 
-        for (Record record : records) {
-            Frame frame = record.getFrame();
-            int frame_id;
-            try (NamedParameterStatement stmt = new NamedParameterStatement(con, "INSERT INTO frames(frame_number, minute, section, match_id) VALUES(:frame_number, :minute, :section, :match_id)", Statement.RETURN_GENERATED_KEYS)) {
+        int totalRecords = 0;
+        while (totalRecords < records.size()) {
+
+            NamedParameterStatement stmt = new NamedParameterStatement(con, "INSERT INTO frames(frame_number, minute, section, match_id) VALUES(:frame_number, :minute, :section, :match_id)", Statement.RETURN_GENERATED_KEYS);
+            NamedParameterStatement stmt_ref = new NamedParameterStatement(con, "INSERT INTO referee_measurement(internal_id, x, y, speed, referee_id, frame_id) VALUES(:internal_id, :x, :y, :speed, :referee_id, :frame_id)", Statement.RETURN_GENERATED_KEYS);
+            NamedParameterStatement stmt_ball = new NamedParameterStatement(con, "INSERT INTO ball_measurements(x, y, z, flag, possession, frame_id) VALUES(:x, :y, :z, :flag, :possession, :frame_id)", Statement.RETURN_GENERATED_KEYS);
+            NamedParameterStatement stmt_player = new NamedParameterStatement(con, "INSERT INTO player_measurements(internal_id, x, y, speed, player_id, frame_id) VALUES(:internal_id, :x, :y, :speed, :player_id, :frame_id)", Statement.RETURN_GENERATED_KEYS);
+
+            ListIterator<Record> it = records.listIterator(totalRecords);
+            for (int currentBatchSize = 0; currentBatchSize < DEFAULT_BATCH_SIZE && it.hasNext(); currentBatchSize++) {
+                Record record = it.next();
+                Frame frame = record.getFrame();
                 stmt.setInt("frame_number", frame.getFrameNumber());
                 stmt.setInt("minute", frame.getMinute());
                 stmt.setInt("section", frame.getSection());
                 stmt.setInt("match_id", match_id);
-                stmt.execute();
-                frame_id = stmt.getGeneratedKey();
+                stmt.addBatch();
             }
+            stmt.executeBatch();
+            List<Integer> frameIds = stmt.getGeneratedIntegerKeys();
+            stmt.close();
 
-            assert (record.getReferees().size() == 3);
-
-            int internal_id = 22;
-            for (Referee referee : record.getReferees()) {
-                try (NamedParameterStatement stmt = new NamedParameterStatement(con, "INSERT INTO referee_measurement(internal_id, x, y, speed, referee_id, frame_id) VALUES(:internal_id, :x, :y, :speed, :referee_id, :frame_id)", Statement.RETURN_GENERATED_KEYS)) {
-                    stmt.setInt("internal_id", internal_id);
-                    stmt.setFloat("x", referee.getX());
-                    stmt.setFloat("y", referee.getY());
-                    stmt.setFloat("speed", referee.getSpeed());
-                    stmt.setInt("referee_id", internal_id - 21);  // FIXME: cannot last for long..
-                    stmt.setInt("frame_id", frame_id);
-                    stmt.execute();
+            it = records.listIterator(totalRecords);
+            for (int frame_id : frameIds) {
+                Record record = it.next();
+                int internal_id = 0;
+                for (Player player : Iterables.concat(record.getTeamHome(), record.getTeamAway())) {
+                    stmt_player.setInt("internal_id", internal_id);
+                    stmt_player.setFloat("x", player.getX());
+                    stmt_player.setFloat("y", player.getY());
+                    stmt_player.setFloat("speed", player.getSpeed());
+                    stmt_player.setInt("player_id", internal_id + 1);  // FIXME: this might break if more matches are added, since then we cannot easily compute the id this way
+                    stmt_player.setInt("frame_id", frame_id);
+                    stmt_player.execute();
                     internal_id++;
                 }
             }
+            stmt_player.executeBatch();
+            stmt_player.close();
 
-            try (NamedParameterStatement stmt = new NamedParameterStatement(con, "INSERT INTO ball_measurements(x, y, z, flag, possession, frame_id) VALUES(:x, :y, :z, :flag, :possession, :frame_id)", Statement.RETURN_GENERATED_KEYS)) {
+            it = records.listIterator(totalRecords);
+            for (int frame_id : frameIds) {
+                Record record = it.next();
+                int internal_id = 22;
+                for (Referee referee : record.getReferees()) {
+                    stmt_ref.setInt("internal_id", internal_id);
+                    stmt_ref.setFloat("x", referee.getX());
+                    stmt_ref.setFloat("y", referee.getY());
+                    stmt_ref.setFloat("speed", referee.getSpeed());
+                    stmt_ref.setInt("referee_id", internal_id - 21);  // FIXME: cannot last for long..
+                    stmt_ref.setInt("frame_id", frame_id);
+                    stmt_ref.addBatch();
+                    internal_id++;
+                }
+            }
+            stmt_ref.executeBatch();
+            stmt_ref.close();
+
+            it = records.listIterator(totalRecords);
+            for (int frame_id : frameIds) {
+                Record record = it.next();
                 Ball ball = record.getBall();
-                stmt.setFloat("x", ball.getX());
-                stmt.setFloat("y", ball.getY());
-                stmt.setFloat("z", ball.getZ());
-                stmt.setInt("flag", (ball.getFlag()) ? 1 : 0);
-                stmt.setInt("possession", ball.getPossession());
-                stmt.setInt("frame_id", frame_id);
-                stmt.execute();
+                stmt_ball.setFloat("x", ball.getX());
+                stmt_ball.setFloat("y", ball.getY());
+                stmt_ball.setFloat("z", ball.getZ());
+                stmt_ball.setInt("flag", (ball.getFlag()) ? 1 : 0);
+                stmt_ball.setInt("possession", ball.getPossession());
+                stmt_ball.setInt("frame_id", frame_id);
+                stmt_ball.addBatch();
             }
+            stmt_ball.executeBatch();
+            stmt_ball.close();
 
-            internal_id = 0;  // NOTE: these ID's are used in the original data and documentation to refer to entities (players and referees)
+            totalRecords += frameIds.size();
 
-            for (Player player : Iterables.concat(record.getTeamHome(), record.getTeamAway())) {
-                try (NamedParameterStatement stmt = new NamedParameterStatement(con, "INSERT INTO player_measurements(internal_id, x, y, speed, player_id, frame_id) VALUES(:internal_id, :x, :y, :speed, :player_id, :frame_id)", Statement.RETURN_GENERATED_KEYS)) {
-                    stmt.setInt("internal_id", internal_id);
-                    stmt.setFloat("x", player.getX());
-                    stmt.setFloat("y", player.getY());
-                    stmt.setFloat("speed", player.getSpeed());
-                    stmt.setInt("player_id", internal_id + 1);  // FIXME: this might break if more matches are added, since then we cannot easily compute the id this way
-                    stmt.setInt("frame_id", frame_id);
-                    stmt.execute();
-                    internal_id++;
-                }
-            }
+            log.info("currently at {} records", totalRecords);
         }
     }
 }

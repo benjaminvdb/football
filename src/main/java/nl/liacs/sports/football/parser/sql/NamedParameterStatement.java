@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -318,6 +319,20 @@ public class NamedParameterStatement implements AutoCloseable {
 
     public ResultSet getGeneratedKeys() throws SQLException {
         return statement.getGeneratedKeys();
+    }
+
+    /**
+     * This method is not according to the standard SQL statement, but very handy anyway.
+     * @return
+     * @throws SQLException
+     */
+    public List<Integer> getGeneratedIntegerKeys() throws SQLException {
+        ResultSet rs = statement.getGeneratedKeys();
+        List<Integer> keys = new ArrayList<>();
+        while (rs.next()) {
+            keys.add(rs.getInt(1));
+        }
+        return keys;
     }
 
     public int getGeneratedKey() throws SQLException {

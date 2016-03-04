@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `psv`.`teams` (
   `name` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`team_id`),
   UNIQUE INDEX `name_UNIQUE` (`name` ASC))
-ENGINE = InnoDB;
+ENGINE = MyISAM;
 
 
 -- -----------------------------------------------------
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `psv`.`matches` (
     REFERENCES `psv`.`teams` (`team_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = MyISAM;
 
 
 -- -----------------------------------------------------
@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS `psv`.`frames` (
     REFERENCES `psv`.`matches` (`match_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = MyISAM;
 
 
 -- -----------------------------------------------------
@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `psv`.`players` (
   `player_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL,
   PRIMARY KEY (`player_id`))
-ENGINE = InnoDB;
+ENGINE = MyISAM;
 
 
 -- -----------------------------------------------------
@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS `psv`.`player_measurements` (
     REFERENCES `psv`.`frames` (`frame_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = MyISAM;
 
 
 -- -----------------------------------------------------
@@ -128,7 +128,7 @@ CREATE TABLE IF NOT EXISTS `psv`.`referees` (
   `referee_id` INT NOT NULL AUTO_INCREMENT,
   `type` ENUM('main', 'line') NOT NULL,
   PRIMARY KEY (`referee_id`))
-ENGINE = InnoDB;
+ENGINE = MyISAM;
 
 
 -- -----------------------------------------------------
@@ -151,7 +151,7 @@ CREATE TABLE IF NOT EXISTS `psv`.`ball_measurements` (
     REFERENCES `psv`.`frames` (`frame_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = MyISAM;
 
 
 -- -----------------------------------------------------
@@ -180,7 +180,7 @@ CREATE TABLE IF NOT EXISTS `psv`.`referee_measurement` (
     REFERENCES `psv`.`frames` (`frame_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = MyISAM;
 
 
 -- -----------------------------------------------------
@@ -203,7 +203,7 @@ CREATE TABLE IF NOT EXISTS `psv`.`matches_referees_maps` (
     REFERENCES `psv`.`referees` (`referee_id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
+ENGINE = MyISAM;
 
 
 -- -----------------------------------------------------
@@ -227,7 +227,7 @@ CREATE TABLE IF NOT EXISTS `psv`.`teams_players_maps` (
     REFERENCES `psv`.`players` (`player_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = MyISAM;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

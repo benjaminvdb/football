@@ -50,7 +50,7 @@ public class FootballParser {
                 .help("Host to connect to");
         argumentParser.addArgument("-P", "--port").setDefault("3306")
                 .help("Port to connect to");
-        argumentParser.addArgument("-c", "--chunk-size").setDefault("3000")
+        argumentParser.addArgument("-c", "--chunkSize").setDefault("3000")
                 .help("Chunk size (larger is faster, but uses more memory)");
         Namespace ns = null;
         try {
@@ -62,7 +62,7 @@ public class FootballParser {
 
         File dataFile = new File(ns.getString("data"));
         File metadataFile = new File(ns.getString("metadata"));
-        int chunkSize = ns.getInt("chunk-size");
+        int chunkSize = Integer.parseInt(ns.getString("chunkSize"));
 
         log.info("using chunk size of {}", chunkSize);
 

@@ -1,9 +1,9 @@
-package nl.liacs.sports.football.parser.meta;
+package nl.liacs.sports.football.parser.bundesliga.meta.parsers;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.Files;
 
-import nl.liacs.sports.football.parser.meta.models.Player;
+import nl.liacs.sports.football.parser.bundesliga.meta.models.Player;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

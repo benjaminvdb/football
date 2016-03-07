@@ -3,10 +3,10 @@
 // (powered by Fernflower decompiler)
 //
 
-package nl.liacs.sports.football.parser.positional.parsers;
+package nl.liacs.sports.football.parser.bundesliga.positional.parsers;
 
-import nl.liacs.sports.football.parser.positional.PositionalParser;
-import nl.liacs.sports.football.parser.positional.models.Referee;
+import nl.liacs.sports.football.parser.bundesliga.positional.PositionalParser;
+import nl.liacs.sports.football.parser.bundesliga.positional.models.Referee;
 
 import java.util.ArrayList;
 import java.util.List;

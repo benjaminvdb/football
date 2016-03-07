@@ -3,11 +3,11 @@
 // (powered by Fernflower decompiler)
 //
 
-package nl.liacs.sports.football.parser.positional.parsers;
+package nl.liacs.sports.football.parser.bundesliga.positional.parsers;
 
+import nl.liacs.sports.football.parser.bundesliga.positional.PositionalParser;
+import nl.liacs.sports.football.parser.bundesliga.positional.models.Frame;
 import nl.liacs.sports.football.parser.exceptions.InvalidInputLineException;
-import nl.liacs.sports.football.parser.positional.PositionalParser;
-import nl.liacs.sports.football.parser.positional.models.Frame;
 
 public class FrameParser {
 

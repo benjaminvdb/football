@@ -3,31 +3,22 @@
 // (powered by Fernflower decompiler)
 //
 
-package nl.liacs.sports.football.parser.positional.models;
+package nl.liacs.sports.football.parser.bundesliga.positional.models;
 
-public class PlayerSwap {
-    private float id1;
-    private float id2;
+public class PlayerInit {
+    private float id;
     private float from;
     private float to;
 
-    public PlayerSwap() {
+    public PlayerInit() {
     }
 
-    public float getId1() {
-        return this.id1;
+    public float getId() {
+        return this.id;
     }
 
-    public void setId1(float id1) {
-        this.id1 = id1;
-    }
-
-    public float getId2() {
-        return this.id2;
-    }
-
-    public void setId2(float id2) {
-        this.id2 = id2;
+    public void setId(float id) {
+        this.id = id;
     }
 
     public float getFrom() {

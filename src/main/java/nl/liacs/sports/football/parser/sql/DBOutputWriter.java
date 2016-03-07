@@ -2,21 +2,18 @@ package nl.liacs.sports.football.parser.sql;
 
 import com.google.common.collect.Iterables;
 
-import nl.liacs.sports.football.parser.positional.models.Ball;
-import nl.liacs.sports.football.parser.positional.models.Frame;
-import nl.liacs.sports.football.parser.positional.models.Player;
-import nl.liacs.sports.football.parser.positional.models.Record;
-import nl.liacs.sports.football.parser.positional.models.Referee;
+import nl.liacs.sports.football.parser.bundesliga.positional.models.Ball;
+import nl.liacs.sports.football.parser.bundesliga.positional.models.Frame;
+import nl.liacs.sports.football.parser.bundesliga.positional.models.Player;
+import nl.liacs.sports.football.parser.bundesliga.positional.models.Record;
+import nl.liacs.sports.football.parser.bundesliga.positional.models.Referee;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 

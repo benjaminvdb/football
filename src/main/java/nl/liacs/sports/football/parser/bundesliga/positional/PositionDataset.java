@@ -1,6 +1,6 @@
-package nl.liacs.sports.football.parser.positional;
+package nl.liacs.sports.football.parser.bundesliga.positional;
 
-import nl.liacs.sports.football.parser.positional.models.Record;
+import nl.liacs.sports.football.parser.bundesliga.positional.models.Record;
 
 import java.util.List;
 

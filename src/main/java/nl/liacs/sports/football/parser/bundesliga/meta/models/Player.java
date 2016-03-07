@@ -1,4 +1,4 @@
-package nl.liacs.sports.football.parser.meta.models;
+package nl.liacs.sports.football.parser.bundesliga.meta.models;
 
 public class Player {
     public String getPosition() {

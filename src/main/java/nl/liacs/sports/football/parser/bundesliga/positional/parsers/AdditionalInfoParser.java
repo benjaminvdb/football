@@ -3,15 +3,15 @@
 // (powered by Fernflower decompiler)
 //
 
-package nl.liacs.sports.football.parser.positional.parsers;
+package nl.liacs.sports.football.parser.bundesliga.positional.parsers;
 
+import nl.liacs.sports.football.parser.bundesliga.positional.PositionalParser;
+import nl.liacs.sports.football.parser.bundesliga.positional.models.AdditionalInfo;
+import nl.liacs.sports.football.parser.bundesliga.positional.models.BallDistance;
+import nl.liacs.sports.football.parser.bundesliga.positional.models.PitchSize;
+import nl.liacs.sports.football.parser.bundesliga.positional.models.PlayerInit;
+import nl.liacs.sports.football.parser.bundesliga.positional.models.PlayerSwap;
 import nl.liacs.sports.football.parser.exceptions.InvalidInputFieldException;
-import nl.liacs.sports.football.parser.positional.PositionalParser;
-import nl.liacs.sports.football.parser.positional.models.AdditionalInfo;
-import nl.liacs.sports.football.parser.positional.models.BallDistance;
-import nl.liacs.sports.football.parser.positional.models.PitchSize;
-import nl.liacs.sports.football.parser.positional.models.PlayerInit;
-import nl.liacs.sports.football.parser.positional.models.PlayerSwap;
 
 import java.util.Optional;
 

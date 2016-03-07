@@ -1,7 +1,7 @@
 package nl.liacs.sports.football.parser;
 
-import nl.liacs.sports.football.parser.meta.MetadataParser;
-import nl.liacs.sports.football.parser.positional.PositionalParser;
+import nl.liacs.sports.football.parser.bundesliga.meta.parsers.MetadataParser;
+import nl.liacs.sports.football.parser.bundesliga.positional.PositionalParser;
 
 import org.slf4j.LoggerFactory;
 

@@ -3,7 +3,7 @@
 // (powered by Fernflower decompiler)
 //
 
-package nl.liacs.sports.football.parser.positional.models;
+package nl.liacs.sports.football.parser.bundesliga.positional.models;
 
 import java.util.List;
 

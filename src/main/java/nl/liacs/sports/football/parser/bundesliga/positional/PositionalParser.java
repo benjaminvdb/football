@@ -3,22 +3,17 @@
 // (powered by Fernflower decompiler)
 //
 
-package nl.liacs.sports.football.parser.positional;
+package nl.liacs.sports.football.parser.bundesliga.positional;
 
 import com.google.common.io.CharStreams;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-
+import nl.liacs.sports.football.parser.bundesliga.positional.models.Record;
+import nl.liacs.sports.football.parser.bundesliga.positional.parsers.AdditionalInfoParser;
+import nl.liacs.sports.football.parser.bundesliga.positional.parsers.BallParser;
+import nl.liacs.sports.football.parser.bundesliga.positional.parsers.FrameParser;
+import nl.liacs.sports.football.parser.bundesliga.positional.parsers.RefereesParser;
+import nl.liacs.sports.football.parser.bundesliga.positional.parsers.TeamParser;
 import nl.liacs.sports.football.parser.exceptions.InvalidInputLineException;
-import nl.liacs.sports.football.parser.positional.models.Record;
-import nl.liacs.sports.football.parser.positional.parsers.AdditionalInfoParser;
-import nl.liacs.sports.football.parser.positional.parsers.BallParser;
-import nl.liacs.sports.football.parser.positional.parsers.FrameParser;
-import nl.liacs.sports.football.parser.positional.parsers.RefereesParser;
-import nl.liacs.sports.football.parser.positional.parsers.TeamParser;
 
 import java.io.File;
 import java.io.FileReader;
@@ -49,10 +44,6 @@ public class PositionalParser {
      * @throws IOException
      */
     private List<Record> parse() throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new Jdk8Module());
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         List<Record> records = new ArrayList<>();
 
         List<String> lines = CharStreams.readLines(new FileReader(this.file));

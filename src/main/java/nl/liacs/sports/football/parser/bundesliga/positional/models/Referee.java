@@ -3,23 +3,14 @@
 // (powered by Fernflower decompiler)
 //
 
-package nl.liacs.sports.football.parser.positional.models;
+package nl.liacs.sports.football.parser.bundesliga.positional.models;
 
-public class Player {
-    private int jersey_number;
+public class Referee {
     private float x;
     private float y;
     private float speed;
 
-    public Player() {
-    }
-
-    public int getJerseyNumber() {
-        return this.jersey_number;
-    }
-
-    public void setJerseyNumber(int jersey_number) {
-        this.jersey_number = jersey_number;
+    public Referee() {
     }
 
     public float getX() {

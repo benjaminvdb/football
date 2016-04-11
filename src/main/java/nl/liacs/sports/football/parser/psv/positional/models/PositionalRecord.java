@@ -1,4 +1,4 @@
-package nl.liacs.sports.football.parser.psv.positional;
+package nl.liacs.sports.football.parser.psv.positional.models;
 
 public class PositionalRecord {
     private int timestamp;
@@ -14,6 +14,16 @@ public class PositionalRecord {
     private float acceleration;
 
     private String name;
+
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
+    private int ID;
 
     public int getTimestamp() {
         return timestamp;

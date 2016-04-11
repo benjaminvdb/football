@@ -12,7 +12,7 @@ import nl.liacs.sports.football.parser.exceptions.InvalidInputLineException;
 public class BallParser {
     public static Ball parse(String s) {
         String[] entities = PositionalParser.chunkEntities(s);
-        if(entities.length != 1) {
+        if (entities.length != 1) {
             throw new InvalidInputLineException("a ball block should consist of only one entity, got " + entities.length);
         } else {
             final String[] fields = PositionalParser.chunkFields(entities[0], 6);

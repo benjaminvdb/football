@@ -34,14 +34,32 @@ public class PositionalParser {
         this.records = parse();
     }
 
+    public static String[] chunkFields(String s, int nparts) throws InvalidInputLineException {
+        String[] parts = s.split(",", nparts);
+        if (parts.length != nparts) {
+            throw new InvalidInputLineException("this block was expected to contain " + Integer.toString(nparts) + " fields.");
+        } else {
+            return parts;
+        }
+    }
+
+    public static String[] chunkFields(String s) throws InvalidInputLineException {
+        return s.split(",");
+    }
+
+    public static String[] chunkEntities(String s) throws InvalidInputLineException {
+        return s.split(";");
+    }
+
     public List<Record> getRecords() {
         return records;
     }
 
     /**
-     * Deserialize the input data into a more manageable format that can be serialized to JSON easily.
+     * Deserialize the input data into a more manageable format that can be serialized to JSON
+     * easily.
+     *
      * @return a list of Record objects, each structurally equivalent to the input data.
-     * @throws IOException
      */
     private List<Record> parse() throws IOException {
         List<Record> records = new ArrayList<>();
@@ -63,22 +81,5 @@ public class PositionalParser {
             records.add(record);
         }
         return records;
-    }
-
-    public static String[] chunkFields(String s, int nparts) throws InvalidInputLineException {
-        String[] parts = s.split(",", nparts);
-        if (parts.length != nparts) {
-            throw new InvalidInputLineException("this block was expected to contain " + Integer.toString(nparts) + " fields.");
-        } else {
-            return parts;
-        }
-    }
-
-    public static String[] chunkFields(String s) throws InvalidInputLineException {
-        return s.split(",");
-    }
-
-    public static String[] chunkEntities(String s) throws InvalidInputLineException {
-        return s.split(";");
     }
 }

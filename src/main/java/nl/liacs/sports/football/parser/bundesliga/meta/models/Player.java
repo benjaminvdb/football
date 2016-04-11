@@ -1,6 +1,13 @@
 package nl.liacs.sports.football.parser.bundesliga.meta.models;
 
 public class Player {
+    private String position;
+    private int uniformNumber;
+    private String fullName;
+    private String nickName;
+    private String lastName;
+    private String internalId;
+
     public String getPosition() {
         return position;
     }
@@ -40,13 +47,6 @@ public class Player {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-
-    private String position;
-    private int uniformNumber;
-    private String fullName;
-    private String nickName;
-    private String lastName;
-    private String internalId;
 
     public String getInternalId() {
         return internalId;

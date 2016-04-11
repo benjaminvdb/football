@@ -19,6 +19,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MetadataParser {
+    private String teamHome;
+    private String teamAway;
+    private List<Player> players;
+    private Date date;
+    private File file;
+
+    public MetadataParser(File file) throws IOException, ParseException {
+        this.file = file;
+        parse();
+    }
+
     public String getTeamHome() {
         return teamHome;
     }
@@ -49,17 +60,6 @@ public class MetadataParser {
 
     public void setDate(Date date) {
         this.date = date;
-    }
-
-    private String teamHome;
-    private String teamAway;
-    private List<Player> players;
-    private Date date;
-    private File file;
-
-    public MetadataParser(File file) throws IOException, ParseException {
-        this.file = file;
-        parse();
     }
 
     private void parse() throws ParseException, IOException {

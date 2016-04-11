@@ -24,12 +24,12 @@ public class AdditionalInfoParser {
         AdditionalInfo additionalInfo = new AdditionalInfo();
         for (String entity : entities) {
             final String[] fields = PositionalParser.chunkFields(entity);
-            if(fields[0].isEmpty()) {
+            if (fields[0].isEmpty()) {
                 break;
             }
 
             int id = Integer.parseInt(fields[0]);
-            switch(id) {
+            switch (id) {
                 case 1:
                     additionalInfo.setPlayerInit(Optional.of(new PlayerInit() {
                         {

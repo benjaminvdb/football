@@ -323,8 +323,6 @@ public class NamedParameterStatement implements AutoCloseable {
 
     /**
      * This method is not according to the standard SQL statement, but very handy anyway.
-     * @return
-     * @throws SQLException
      */
     public List<Integer> getGeneratedIntegerKeys() throws SQLException {
         ResultSet rs = statement.getGeneratedKeys();

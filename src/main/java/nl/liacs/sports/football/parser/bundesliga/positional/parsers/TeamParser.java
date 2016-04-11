@@ -19,7 +19,7 @@ public class TeamParser {
     public static List<Player> parse(String s) throws InvalidInputLineException {
         String[] players = PositionalParser.chunkEntities(s);
         ArrayList<Player> newPlayers = new ArrayList();
-        for(String player : players) {
+        for (String player : players) {
             final String[] fields = PositionalParser.chunkFields(player, 4);
             Player newPlayer = new Player() {
                 {

@@ -10,6 +10,7 @@ import net.sourceforge.argparse4j.inf.Subparsers;
 
 import nl.liacs.sports.football.parser.bundesliga.meta.parsers.MetadataParser;
 import nl.liacs.sports.football.parser.bundesliga.positional.PositionalParser;
+import nl.liacs.sports.football.parser.psv.positional.models.PositionalDataset;
 import nl.liacs.sports.football.parser.sql.DBOutputWriter;
 
 import org.slf4j.Logger;
@@ -17,21 +18,28 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import ch.qos.logback.classic.Level;
 
 public class FootballParser {
+    final private static Logger log = LoggerFactory.getLogger(FootballParser.class);
     private static String TEAM_HOME = "FC Koln";
     private static String TEAM_AWAY = "Hannover 96";
-    final private static Logger log = LoggerFactory.getLogger(FootballParser.class);
 
     public static void main(String[] args) throws ClassNotFoundException {
-        ((ch.qos.logback.classic.Logger)log).setLevel(Level.ALL);
+        ((ch.qos.logback.classic.Logger) log).setLevel(Level.ALL);
 
         /* Iput argument parser. */
         ArgumentParser argumentParser = ArgumentParsers.newArgumentParser("Parser")
@@ -70,7 +78,7 @@ public class FootballParser {
                         parseBundesliga(ns);
                         break;
                     case "psv":
-                        parsePSV(ns);
+                        parsePSV(ns, con);
                         break;
                     default:
                         throw new IllegalArgumentException("illegal subcommand: " + subcommand);
@@ -88,8 +96,8 @@ public class FootballParser {
 
     /**
      * Parse the Bundesliga data.
-     * @param ns  the namespace as constructed by the argument parser
-     * @throws ClassNotFoundException
+     *
+     * @param ns the namespace as constructed by the argument parser
      */
     public static void parseBundesliga(Namespace ns) throws ClassNotFoundException {
         File dataFile = new File(ns.getString("data"));
@@ -137,18 +145,35 @@ public class FootballParser {
 
     /**
      * Parse the PSV data.
-     * @param ns  the namespace as constructed by the argument parser
-     * @throws ClassNotFoundException
+     *
+     * @param ns the namespace as constructed by the argument parser
      */
-    public static void parsePSV(Namespace ns) {
+    public static void parsePSV(Namespace ns, Connection con) throws SQLException, ClassNotFoundException {
+        File dataDirectory = new File(ns.getString("data"));
+        log.info("reading positional data from directory {}", dataDirectory.getAbsolutePath());
 
+//        File metadataFile = new File(ns.getString("metadata"));
+//        log.info("reading metadata from {}", metadataFile.getAbsolutePath());
+
+//        int chunkSize = Integer.parseInt(ns.getString("chunkSize"));
+//        log.info("using chunk size of {}", chunkSize);
+
+        try {
+            /* TODO: start programming here. Write results to database. */
+            DirectoryStream<Path> ds = Files.newDirectoryStream(Paths.get("/Users/benny/Downloads/Wedstrijden PSV"), "*.csv");
+            for (Path path : ds) {
+                PositionalDataset dataset = new nl.liacs.sports.football.parser.psv.positional.parsers.PositionalParser(path.toFile()).parse();
+                nl.liacs.sports.football.parser.psv.positional.sql.DBOutputWriter writer = new nl.liacs.sports.football.parser.psv.positional.sql.DBOutputWriter(con);
+                writer.write(con, dataset, 100000);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * Many of the arguments for the subcommands are the same, so we can reuse them using this
      * function.
-     * @param subparser
-     * @return
      */
     public static Subparser setDefaultArguments(Subparser subparser) {
         subparser.addArgument("data").type(Arguments.fileType().acceptSystemIn().verifyCanRead())
@@ -170,25 +195,18 @@ public class FootballParser {
 
     /**
      * Establish a connection with the MySQL database.
-     * @param userName
-     * @param password
-     * @param host
-     * @param port
-     * @return
-     * @throws SQLException
-     * @throws ClassNotFoundException
      */
     public static Connection getConnection(String userName,
-                                    String password,
-                                    String host,
-                                    String port) throws SQLException, ClassNotFoundException {
+                                           String password,
+                                           String host,
+                                           String port) throws SQLException, ClassNotFoundException {
         Properties props = new Properties();
         props.put("user", userName);
         props.put("password", password);
         Class.forName("com.mysql.jdbc.Driver");
         Connection con = DriverManager.getConnection(
-                    "jdbc:mysql://" + host + ":" + port + "/psv",
-                    props);
+                "jdbc:mysql://" + host + ":" + port + "/psv?verifyServerCertificate=false&useSSL=false&requireSSL=false",
+                props);
         System.out.println("Connected to database");
         return con;
     }
